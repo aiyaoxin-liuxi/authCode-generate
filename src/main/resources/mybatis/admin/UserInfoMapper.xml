@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhl.auth.dao.IUserInfoDao">
+
+	<resultMap id="UserInfoMapper" type="com.zhl.auth.pojo.UserInfo" >
+	    <id column="ID" property="id" jdbcType="VARCHAR" />
+	    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+	    <result column="PASS_WORD" property="passWord" jdbcType="VARCHAR" />
+	    <result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
+	    <result column="USER_STATE" property="userState" jdbcType="VARCHAR" />
+	    <result column="REV1" property="rev1" jdbcType="VARCHAR" />
+	    <result column="REV2" property="rev2" jdbcType="VARCHAR" />
+	    <result column="REV3" property="rev3" jdbcType="VARCHAR" />
+	    <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+	    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+	    <result column="UPDATE_DATE" property="updateDate" jdbcType="TIMESTAMP" />
+	    <result column="UPDATE_USER" property="updateUser" jdbcType="VARCHAR" />
+	    <result column="ISDEL" property="isdel" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+        ID, USER_NAME, PASS_WORD, USER_TYPE, USER_STATE, REV1, REV2, REV3, 
+        CREATE_DATE, CREATE_USER, UPDATE_DATE, UPDATE_USER, ISDEL
+    </sql>
+    
+    <!-- 标记为未删除的 -->
+    <sql id="Base_Column_isdel">
+         and ISDEL = '00'
+    </sql>
+	
+	<select id="getUserById" resultMap="UserInfoMapper" parameterType="java.lang.String" >
+		select 
+		<include refid="Base_Column_List" />  
+		from USER_INFO where ID = #{id}
+	</select>
+
+	<select id="getUserByUsername" parameterType="map" resultMap="UserInfoMapper">
+		select 
+        <include refid="Base_Column_List" />  
+        from USER_INFO where USER_NAME = #{userName}
+        <include refid="Base_Column_isdel" />  
+	</select>
+	
+</mapper>

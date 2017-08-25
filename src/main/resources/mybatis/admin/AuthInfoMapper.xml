@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhl.auth.dao.IAuthInfoDao">
+
+	<resultMap id="AuthInfoMapper" type="com.zhl.auth.pojo.AuthInfo" >
+	    <id column="ID" property="id" jdbcType="VARCHAR" />
+	    <result column="SYS_ID" property="sysId" jdbcType="VARCHAR" />
+	    <result column="USE_COMPANY_NAME" property="useCompanyName" jdbcType="VARCHAR" />
+	    <result column="SYS_NAME" property="sysName" jdbcType="VARCHAR" />
+	    <result column="SYS_AUTH" property="sysAuth" jdbcType="VARCHAR" />
+	    <result column="PUBLIC_KEY" property="publicKey" jdbcType="VARCHAR" />
+	    <result column="PRIVATE_KEY" property="privateKey" jdbcType="VARCHAR" />
+	    <result column="KEY_TYPE" property="keyType" jdbcType="VARCHAR" />
+	    <result column="START_DATE" property="startDate" jdbcType="TIMESTAMP" />
+	    <result column="END_DATE" property="endDate" jdbcType="TIMESTAMP" />
+	    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+	    <result column="AUTH_TYPE" property="authType" jdbcType="VARCHAR" />
+	    <result column="AUTH_STATE" property="authState" jdbcType="VARCHAR" />
+	    <result column="REV1" property="rev1" jdbcType="VARCHAR" />
+	    <result column="REV2" property="rev2" jdbcType="VARCHAR" />
+	    <result column="REV3" property="rev3" jdbcType="VARCHAR" />
+	    <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+	    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+	    <result column="UPDATE_DATE" property="updateDate" jdbcType="TIMESTAMP" />
+	    <result column="UPDATE_USER" property="updateUser" jdbcType="VARCHAR" />
+	    <result column="ISDEL" property="isdel" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+        ID, SYS_ID, USE_COMPANY_NAME, SYS_NAME, SYS_AUTH, PUBLIC_KEY, PRIVATE_KEY, KEY_TYPE,
+        START_DATE, END_DATE, REMARK, AUTH_TYPE, AUTH_STATE, REV1, REV2, REV3, 
+        CREATE_DATE, CREATE_USER, UPDATE_DATE, UPDATE_USER, ISDEL
+    </sql>
+    
+    <!-- 标记为未删除的 -->
+    <sql id="Base_Column_isdel">
+         and ISDEL = '00'
+    </sql>
+    
+    <!-- 根据主键id查询 -->
+    <select id="queryAuthInfoById" parameterType="java.lang.String" resultMap="AuthInfoMapper">
+        select 
+        <include refid="Base_Column_List" />  
+        from AUTH_INFO 
+        <where>
+            ID = #{id} 
+            <include refid="Base_Column_isdel" />
+        </where>
+    </select>
+	
+	<!-- 查询列表 -->
+	<select id="getAuthInfoList" parameterType="map" resultMap="AuthInfoMapper">
+		select 
+		<include refid="Base_Column_List" />  
+		from AUTH_INFO 
+        <where>
+            <if test="id != null and id != ''">
+                and ID = #{id} 
+            </if>
+            <if test="sysId != null and sysId != ''">
+                and SYS_ID = #{sysId} 
+            </if>
+            <if test="useCompanyName != null and useCompanyName != ''">
+                and USE_COMPANY_NAME = #{useCompanyName} 
+            </if>
+            <if test="sysName != null and sysName != ''">
+                and SYS_NAME = #{sysName} 
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and START_DATE = #{startDate} 
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and END_DATE = #{endDate} 
+            </if>
+            <include refid="Base_Column_isdel" />
+            order by CREATE_DATE desc
+        </where>
+	</select>
+	
+	<!-- 添加 -->
+    <insert id="addAuthInfo" parameterType="AuthInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into AUTH_INFO 
+        (
+        <include refid="Base_Column_List" />  
+        ) 
+        values 
+        (
+            #{id}, #{sysId}, #{useCompanyName}, #{sysName}, #{sysAuth}, #{publicKey}, 
+            #{privateKey}, #{keyType}, #{startDate}, #{endDate}, #{remark}, #{authType}, 
+            #{authState}, #{rev1}, #{rev2}, #{rev3}, #{createDate}, #{createUser}, 
+            #{updateDate}, #{updateUser}, #{isdel}
+        )
+    </insert>
+    <!-- 修改 -->
+    <update id="updateAuthInfo" parameterType="map">
+        update AUTH_INFO 
+        <set>
+           SYS_NAME=#{sysName},
+           USE_COMPANY_NAME=#{useCompanyName},
+           KEY_TYPE=#{keyType},
+           SYS_AUTH=#{sysAuth},
+           PUBLIC_KEY=#{publicKey},
+           PRIVATE_KEY=#{privateKey},
+           START_DATE=#{startDate},
+           END_DATE=#{endDate},
+           REMARK=#{remark},
+           UPDATE_DATE=#{updateDate},
+        </set>
+        <where>ID = #{id}</where>
+    </update>
+	
+	<!-- 逻辑删除 -->
+    <update id="delAuthInfo" parameterType="map">
+        update AUTH_INFO 
+        <set>
+            <if test="isdel != null and isdel != ''">
+                ISDEL=#{isdel}
+            </if>
+        </set>
+        <where>ID = #{id}</where>
+    </update>
+</mapper>
